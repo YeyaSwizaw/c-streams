@@ -1,0 +1,9 @@
+#ifndef STREAM_DEFINES_HPP
+#define STREAM_DEFINES_HPP
+
+#define STREAMS_NS_NAME streams
+
+#define STREAMS_NS namespace STREAMS_NS_NAME {
+#define STREAMS_NS_END }
+
+#endif //STREAM_DEFINES_HPP
