@@ -2,71 +2,51 @@
 #define STREAM_FILTER_HPP
 
 #include "defines.hpp"
-#include "filter.hpp"
+#include "iterable.hpp"
 
 STREAMS_NS
 
-template<typename T, typename F>
-class filter
+template<typename Iter, typename F>
+class filter_iter
 {
 public:
-    template<typename I>
-    class iter
+    filter_iter(Iter from, Iter to, F f) :
+            inner(std::move(from)),
+            end(std::move(to)),
+            f(std::move(f)) {}
+
+    auto operator*() const
     {
-    public:
-        iter(I i, F f, I end) :
-            i(i),
-            end(end),
-            f(f) {}
-
-        auto operator*() const
-        {
-            return *i;
-        }
-
-        auto& operator++()
-        {
-            do
-            {
-                ++i;
-            } while(i != end && !f(*i));
-
-            return *this;
-        }
-
-        bool operator==(const iter<I>& other)
-        {
-            return i == other.i;
-        }
-
-        bool operator!=(const iter<I>& other)
-        {
-            return !(*this == other);
-        }
-
-    private:
-        I i, end;
-        F f;
-    };
-
-    filter(T input, F f) :
-        input(input),
-        f(f) {}
-
-    auto begin() const
-    {
-        return iter<decltype(input.begin())>(input.begin(), f, input.end());
+        return *inner;
     }
 
-    auto end() const
+    auto& operator++()
     {
-        return iter<decltype(input.end())>(input.end(), f, input.end());
+        do
+        {
+            ++inner;
+        } while(inner != end && !f(*inner));
+
+        return *this;
+    }
+
+    bool operator==(const filter_iter<Iter, F>& other)
+    {
+        return inner == other.inner;
+    }
+
+    bool operator!=(const filter_iter<Iter, F>& other)
+    {
+        return !(*this == other);
     }
 
 private:
-    T input;
+    Iter inner, end;
     F f;
 };
+
+template<typename Inner, typename F>
+using filter = iterable<Inner, filter_iter<decltype(std::declval<Inner>().begin()), F>, F>;
 
 STREAMS_NS_END
 

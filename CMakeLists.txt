@@ -11,10 +11,11 @@ set(SRC_DIR "${SRC_ROOT}/streams")
 target_include_directories(streams INTERFACE src/)
 
 target_sources(streams INTERFACE
+        "${SRC_DIR}/defines.hpp"
         "${SRC_DIR}/streams.hpp"
+        "${SRC_DIR}/iterable.hpp"
         "${SRC_DIR}/map.hpp"
-        "${SRC_DIR}/filter.hpp"
-        "${SRC_DIR}/defines.hpp")
+        "${SRC_DIR}/filter.hpp")
 
 add_executable(hello main.cpp)
 

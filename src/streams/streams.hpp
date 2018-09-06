@@ -2,6 +2,7 @@
 #define STREAM_STREAMS_HPP
 
 #include "defines.hpp"
+#include "iterable.hpp"
 #include "map.hpp"
 #include "filter.hpp"
 
@@ -18,14 +19,14 @@ public:
     auto map(F f) const
     {
         using map_t = ::STREAMS_NS_NAME::map<T, F>;
-        return stream_t<map_t>(map_t(input, f));
+        return stream_t<map_t>(map_t(std::move(input), std::move(f)));
     }
 
     template<typename F>
     auto filter(F f) const
     {
         using filter_t = ::STREAMS_NS_NAME::filter<T, F>;
-        return stream_t<filter_t>(filter_t(input, f));
+        return stream_t<filter_t>(filter_t(std::move(input), std::move(f)));
     }
 
     auto begin() const

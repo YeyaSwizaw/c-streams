@@ -2,66 +2,46 @@
 #define STREAM_MAP_HPP
 
 #include "defines.hpp"
-#include "map.hpp"
+#include "iterable.hpp"
 
 STREAMS_NS
 
-template<typename T, typename F>
-class map
+template<typename Iter, typename F>
+class map_iter
 {
 public:
-    template<typename I>
-    class iter
+    map_iter(Iter from, Iter to, F f) :
+        inner(std::move(from)),
+        f(std::move(f)) {}
+
+    auto operator*() const
     {
-    public:
-        iter(I i, F f) :
-            i(i),
-            f(f) {}
-
-        auto operator*() const
-        {
-            return f(*i);
-        }
-
-        auto& operator++()
-        {
-            ++i;
-            return *this;
-        }
-
-        bool operator==(const iter<I>& other)
-        {
-            return i == other.i;
-        }
-
-        bool operator!=(const iter<I>& other)
-        {
-            return !(*this == other);
-        }
-
-    private:
-        I i;
-        F f;
-    };
-
-    map(T input, F f) :
-        input(input),
-        f(f) {}
-
-    auto begin() const
-    {
-        return iter<decltype(input.begin())>(input.begin(), f);
+        return f(*inner);
     }
 
-    auto end() const
+    auto& operator++()
     {
-        return iter<decltype(input.end())>(input.end(), f);
+        ++inner;
+        return *this;
+    }
+
+    bool operator==(const map_iter<Iter, F>& other)
+    {
+        return inner == other.inner;
+    }
+
+    bool operator!=(const map_iter<Iter, F>& other)
+    {
+        return !(*this == other);
     }
 
 private:
-    T input;
+    Iter inner;
     F f;
 };
+
+template<typename Inner, typename F>
+using map = iterable<Inner, map_iter<decltype(std::declval<Inner>().begin()), F>, F>;
 
 STREAMS_NS_END
 
