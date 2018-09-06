@@ -14,6 +14,7 @@ target_sources(streams INTERFACE
         "${SRC_DIR}/defines.hpp"
         "${SRC_DIR}/streams.hpp"
         "${SRC_DIR}/iterable.hpp"
+        "${SRC_DIR}/iter_base.hpp"
         "${SRC_DIR}/map.hpp"
         "${SRC_DIR}/filter.hpp")
 

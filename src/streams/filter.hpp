@@ -3,45 +3,33 @@
 
 #include "defines.hpp"
 #include "iterable.hpp"
+#include "iter_base.hpp"
 
 STREAMS_NS
 
 template<typename Iter, typename F>
-class filter_iter
-{
+class filter_iter final : public iter_base<Iter, filter_iter<Iter, F>> {
 public:
     filter_iter(Iter from, Iter to, F f) :
-            inner(std::move(from)),
-            end(std::move(to)),
+            iter_base(std::move(from), std::move(to)),
             f(std::move(f)) {}
 
     auto operator*() const
     {
-        return *inner;
+        return *this->inner;
     }
 
     auto& operator++()
     {
         do
         {
-            ++inner;
-        } while(inner != end && !f(*inner));
+            ++this->inner;
+        } while(this->inner != this->end && !f(*this->inner));
 
         return *this;
     }
 
-    bool operator==(const filter_iter<Iter, F>& other)
-    {
-        return inner == other.inner;
-    }
-
-    bool operator!=(const filter_iter<Iter, F>& other)
-    {
-        return !(*this == other);
-    }
-
 private:
-    Iter inner, end;
     F f;
 };
 
