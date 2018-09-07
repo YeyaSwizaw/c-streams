@@ -12,6 +12,9 @@ template<typename T>
 class stream_t
 {
 public:
+    using value_type = typename T::value_type;
+    using iterator = typename T::iterator;
+
     stream_t(T input) :
         input(input) {}
 
@@ -29,12 +32,12 @@ public:
         return stream_t<filter_t>(filter_t(std::move(input), std::move(f)));
     }
 
-    auto begin() const
+    iterator begin() const
     {
         return input.begin();
     }
 
-    auto end() const
+    iterator end() const
     {
         return input.end();
     }
@@ -46,6 +49,9 @@ private:
 template<typename I>
 struct iter_wrapper
 {
+    using value_type = typename I::value_type;
+    using iterator = I;
+
     auto begin() const
     {
         return b;
